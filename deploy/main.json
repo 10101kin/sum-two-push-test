@@ -1,0 +1,118 @@
+{
+  "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentTemplate.json#",
+  "contentVersion": "1.0.0.0",
+  "metadata": {
+    "_generator": {
+      "name": "bicep",
+      "version": "0.45.15.27210",
+      "templateHash": "17708062504856880426"
+    }
+  },
+  "parameters": {
+    "location": {
+      "type": "string"
+    },
+    "imageName": {
+      "type": "string"
+    },
+    "imageTag": {
+      "type": "string"
+    },
+    "prefix": {
+      "type": "string"
+    },
+    "dnsNameLabel": {
+      "type": "string"
+    },
+    "appPort": {
+      "type": "int"
+    },
+    "containerCpu": {
+      "type": "int"
+    },
+    "containerMemory": {
+      "type": "int"
+    },
+    "registryServer": {
+      "type": "string",
+      "defaultValue": ""
+    },
+    "registryUsername": {
+      "type": "string",
+      "defaultValue": ""
+    },
+    "registryPassword": {
+      "type": "securestring",
+      "defaultValue": ""
+    }
+  },
+  "resources": [
+    {
+      "type": "Microsoft.OperationalInsights/workspaces",
+      "apiVersion": "2022-10-01",
+      "name": "[format('{0}-law', parameters('prefix'))]",
+      "location": "[parameters('location')]",
+      "properties": {
+        "sku": {
+          "name": "PerGB2018"
+        },
+        "retentionInDays": 30
+      }
+    },
+    {
+      "type": "Microsoft.ContainerInstance/containerGroups",
+      "apiVersion": "2023-05-01",
+      "name": "[format('{0}-cg', parameters('prefix'))]",
+      "location": "[parameters('location')]",
+      "properties": {
+        "osType": "Linux",
+        "restartPolicy": "Always",
+        "ipAddress": {
+          "type": "Public",
+          "dnsNameLabel": "[parameters('dnsNameLabel')]",
+          "ports": [
+            {
+              "protocol": "TCP",
+              "port": "[parameters('appPort')]"
+            }
+          ]
+        },
+        "imageRegistryCredentials": "[if(empty(parameters('registryServer')), createArray(), createArray(createObject('server', parameters('registryServer'), 'username', parameters('registryUsername'), 'password', parameters('registryPassword'))))]",
+        "diagnostics": {
+          "logAnalytics": {
+            "workspaceId": "[reference(resourceId('Microsoft.OperationalInsights/workspaces', format('{0}-law', parameters('prefix'))), '2022-10-01').customerId]",
+            "workspaceKey": "[listKeys(resourceId('Microsoft.OperationalInsights/workspaces', format('{0}-law', parameters('prefix'))), '2020-08-01').primarySharedKey]"
+          }
+        },
+        "containers": [
+          {
+            "name": "[parameters('imageName')]",
+            "properties": {
+              "image": "[format('{0}/{1}:{2}', parameters('registryServer'), parameters('imageName'), parameters('imageTag'))]",
+              "ports": [
+                {
+                  "port": "[parameters('appPort')]"
+                }
+              ],
+              "resources": {
+                "requests": {
+                  "cpu": "[parameters('containerCpu')]",
+                  "memoryInGB": "[parameters('containerMemory')]"
+                }
+              }
+            }
+          }
+        ]
+      },
+      "dependsOn": [
+        "[resourceId('Microsoft.OperationalInsights/workspaces', format('{0}-law', parameters('prefix')))]"
+      ]
+    }
+  ],
+  "outputs": {
+    "appUrl": {
+      "type": "string",
+      "value": "[format('https://{0}.{1}.azurecontainer.io', parameters('dnsNameLabel'), parameters('location'))]"
+    }
+  }
+}

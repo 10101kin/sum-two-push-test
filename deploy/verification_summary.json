@@ -1,0 +1,16 @@
+{
+  "acr_name": null,
+  "image": null,
+  "build_status": "skipped",
+  "build_attempts": 0,
+  "smoke_test_status": "skipped",
+  "smoke_test_reason": "Azure CLI not authenticated.",
+  "resource_group": null,
+  "fqdn": null,
+  "http_status": null,
+  "notes": [
+    "Azure CLI not authenticated. Dockerfile generated but not verified.",
+    "Local static runtime check passed via python http.server (HTTP 200 for /, /script.js, /styles.css).",
+    "Bicep template compilation check passed with az bicep build."
+  ]
+}

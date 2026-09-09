@@ -1,0 +1,12 @@
+.git
+.gitignore
+README.md
+GUIDE.md
+tests/
+deploy/
+*.log
+.DS_Store
+.vscode/
+.idea/
+node_modules/
+coverage/

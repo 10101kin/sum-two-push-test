@@ -1,0 +1,54 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>sum two</title>
+    <link rel="stylesheet" href="styles.css" />
+  </head>
+  <body>
+    <main class="page" aria-labelledby="app-title">
+      <section class="card">
+        <h1 id="app-title">sum two</h1>
+        <p class="subtitle">Enter two numbers and calculate their sum instantly.</p>
+
+        <form id="sum-form" novalidate>
+          <div class="field-group">
+            <label for="value-a">First number</label>
+            <input
+              id="value-a"
+              name="valueA"
+              type="text"
+              inputmode="decimal"
+              autocomplete="off"
+              placeholder="e.g. 2"
+              aria-describedby="error-message"
+            />
+          </div>
+
+          <div class="field-group">
+            <label for="value-b">Second number</label>
+            <input
+              id="value-b"
+              name="valueB"
+              type="text"
+              inputmode="decimal"
+              autocomplete="off"
+              placeholder="e.g. 3"
+              aria-describedby="error-message"
+            />
+          </div>
+
+          <button type="submit" id="calculate-button">Calculate</button>
+        </form>
+
+        <section class="feedback" aria-live="polite" aria-atomic="true">
+          <p id="result-message" class="message result" hidden></p>
+          <p id="error-message" class="message error" hidden></p>
+        </section>
+      </section>
+    </main>
+
+    <script src="script.js"></script>
+  </body>
+</html>
